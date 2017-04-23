@@ -34,6 +34,7 @@ object Codegen extends CaseApp[CodegenOptions] {
 
     if (enrichments.nonEmpty) {
       out.toFile.getParentFile.mkdirs()
+      org.scalameta.logger.elem(out)
       Files.write(out, json.getBytes())
     }
   }
