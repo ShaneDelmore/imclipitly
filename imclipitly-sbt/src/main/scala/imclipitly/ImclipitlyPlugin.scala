@@ -1,6 +1,9 @@
 package imclipitly
 
+import scala.meta.scalahost.sbt.ScalahostSbtPlugin
+
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
 
 import sbt._
@@ -69,13 +72,15 @@ object CliWrapperPlugin extends AutoPlugin {
 
 object ImclipitlyPlugin extends AutoPlugin {
   override def trigger = allRequirements
-  override def requires: Plugins = CliWrapperPlugin && JvmPlugin
+  override def requires: Plugins =
+    ScalahostSbtPlugin && CliWrapperPlugin && JvmPlugin
   object autoImport {
     lazy val imclipitlyIn = taskKey[Seq[File]]("--in files")
     lazy val imclipitlyOut = settingKey[File]("--out directory")
   }
   import autoImport._
   import CliWrapperPlugin.autoImport._
+  import ScalahostSbtPlugin.autoImport._
   lazy val imclipitlyCodegenProject = CliWrapperPlugin
     .createSyntheticProject(
       "imclipitly",
@@ -100,6 +105,16 @@ object ImclipitlyPlugin extends AutoPlugin {
       .value,
     cliWrapperMainClass := "imclipitly.Codegen$",
     resourceGenerators.in(Compile) += Def.task {
+      val sourcepath = sourceDirectories
+        .in(Compile)
+        .value
+        .map(_.getAbsolutePath)
+        .mkString(File.pathSeparator)
+      val classpath = fullClasspath
+        .in(Compile)
+        .value
+        .map(_.data.getAbsolutePath)
+        .mkString(File.pathSeparator)
       val log = streams.value.log
       val cache = target.in(Compile, compile).value / "clippy-codegen"
       val in = imclipitlyIn.value.toSet
@@ -110,8 +125,16 @@ object ImclipitlyPlugin extends AutoPlugin {
           val out =
             imclipitlyOut.value.toPath
               .resolve(relative.toString + ".clippy")
-          val args =
-            Array("--in", in.getAbsolutePath, "--out", out.toString)
+          val args = Array(
+            "--in",
+            in.getAbsolutePath,
+            "--out",
+            out.toString,
+            "--mirror-sourcepath",
+            sourcepath,
+            "--mirror-classpath",
+            classpath
+          )
           log.info(s"Running codegen for $in")
           cliWrapperRun(cliWrapperMain.value.main(args))
           out.toFile
@@ -122,4 +145,3 @@ object ImclipitlyPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     imclipitlySettings
 }
-

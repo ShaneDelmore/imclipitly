@@ -8,8 +8,14 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 import caseapp._
+import org.scalameta.logger
 
-case class CodegenOptions(in: String, out: String)
+case class CodegenOptions(
+    in: String,
+    out: String,
+    mirrorSourcepath: String,
+    mirrorClasspath: String
+)
 case class Enrichment(
     path: String,
     implicitClass: Type.Name,
@@ -25,6 +31,9 @@ object Codegen extends CaseApp[CodegenOptions] {
     }
 
   def run(options: CodegenOptions, ignored: RemainingArgs): Unit = {
+    logger.elem(options.mirrorSourcepath, options.mirrorClasspath)
+    val mirror = Mirror(options.mirrorSourcepath, options.mirrorClasspath)
+    logger.elem(mirror.database)
     val in = Paths.get(options.in)
     val out = Paths.get(options.out)
     val source = in.toFile.parse[Source].get

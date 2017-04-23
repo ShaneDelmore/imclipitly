@@ -1,3 +1,4 @@
+lazy val scalametaVersion = "1.7.0"
 lazy val allSettings = Seq(
   version := "0.1.0-SNAPSHOT",
   scalaVersion := "2.12.2",
@@ -24,7 +25,9 @@ lazy val `imclipitly-core` = project
     allSettings,
     scalaVersion := "2.12.2",
     libraryDependencies += "com.github.alexarchambault" %% "case-app" % "1.2.0-M3",
-    libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0",
+    libraryDependencies += "org.scalameta" %% "scalameta" % scalametaVersion,
+    // soon unnecessary dependency after https://github.com/scalameta/scalameta/pull/808
+    libraryDependencies += "org.scalameta" %% "scalahost-nsc" % scalametaVersion cross CrossVersion.full,
     libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.0",
     libraryDependencies += "com.softwaremill.clippy" %% "plugin" % "0.5.2",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.3" % Test
@@ -38,6 +41,7 @@ lazy val `imclipitly-sbt` = project
     scriptedSettings,
     buildInfoSettings,
     Defaults.itSettings,
+    addSbtPlugin("org.scalameta" %% "sbt-scalahost" % scalametaVersion),
     // to run: imclipitly/it:test
     test.in(IntegrationTest) := {
       scripted
@@ -80,4 +84,3 @@ lazy val noPublish = Seq(
   publishLocal := {}
 )
 noPublish
-
