@@ -1,6 +1,4 @@
-package cliwrapper
-
-import bintray.BintrayKeys._
+package imclipitly
 
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -13,7 +11,9 @@ import sbt.plugins.JvmPlugin
 object CliWrapperPlugin extends AutoPlugin {
 
   def createSyntheticProject(id: String, base: File): Project =
-    Project(id, base).settings(publish := {}, publishLocal := {})
+    Project(id, base).settings(publish := {},
+                               publishLocal := {},
+                               publishArtifact := false)
   class HasMain(reflectiveMain: Main) {
     def main(args: Array[String]): Unit = reflectiveMain.main(args)
   }
@@ -67,60 +67,48 @@ object CliWrapperPlugin extends AutoPlugin {
   )
 }
 
-object ClippyCodegenPlugin extends AutoPlugin {
+object ImclipitlyPlugin extends AutoPlugin {
   override def trigger = allRequirements
   override def requires: Plugins = CliWrapperPlugin && JvmPlugin
   object autoImport {
-    lazy val clippyCodegenIn = taskKey[Seq[File]]("--in files")
-    lazy val clippyCodegenOut = settingKey[File]("--out directory")
+    lazy val imclipitlyIn = taskKey[Seq[File]]("--in files")
+    lazy val imclipitlyOut = settingKey[File]("--out directory")
   }
   import autoImport._
   import CliWrapperPlugin.autoImport._
-  lazy val clippyCodegen = CliWrapperPlugin
+  lazy val imclipitlyCodegenProject = CliWrapperPlugin
     .createSyntheticProject(
-      "clippyCodegen",
-      file("codegen") // should be something like file("project/clippy-codgen")
+      "imclipitly",
+      file("project/imclipitly") // should be something like file("project/clippy-codgen")
     )
     .settings(
-      scalaVersion := "2.12.2",
-      libraryDependencies += "com.github.alexarchambault" %% "case-app" % "1.2.0-M3",
-      libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0",
-      libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.0",
-      libraryDependencies += "com.softwaremill.clippy" %% "plugin" % "0.5.2",
-      libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.3" % Test,
-      version in ThisBuild := "0.0.1",
-      organization in ThisBuild := "io.delmore",
-      description in ThisBuild := "implicitly make your project more clippity with imclipitly",
-      homepage in ThisBuild := Some(
-        url("https://github.com/shanedelmore/imclipitly")),
-      scmInfo in ThisBuild := Some(
-        ScmInfo(url("https://github.com/shanedelmore/imclipitly"),
-                "git@github.com:shanedelmore/imclipitel.git")),
-      licenses in ThisBuild := Seq(
-        "Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0")),
-      bintrayOrganization in ThisBuild := None,
-      bintrayRepository in ThisBuild := "sbt-plugins",
-      bintrayPackage in ThisBuild := "sbt-imclipitly"
+      scalaVersion := ImclipitlyBuildInfo.coreScalaVersion,
+      description := "Automatically generate clippy advice on package.",
+      libraryDependencies := Seq(
+        "io.delmore" %% "imclipitly-core" % ImclipitlyBuildInfo.version
+      )
     )
 
-  override def extraProjects: Seq[Project] = Seq(clippyCodegen)
+  override def extraProjects: Seq[Project] = Seq(imclipitlyCodegenProject)
 
-  lazy val clippyCodegenSettings = Seq(
-    clippyCodegenOut := resourceManaged.in(Compile).value / "clippy",
-    clippyCodegenIn := sources.in(Compile).value.**("*.scala").get,
-    // can be managedClasspath if clippyCodegen project has no main.
-    cliWrapperClasspath := fullClasspath.in(clippyCodegen, Compile).value,
+  lazy val imclipitlySettings = Seq(
+    imclipitlyOut := resourceManaged.in(Compile).value / "clippy",
+    imclipitlyIn := sources.in(Compile).value.**("*.scala").get,
+    // can be managedClasspath if imclipitly project has no main.
+    cliWrapperClasspath := fullClasspath
+      .in(imclipitlyCodegenProject, Compile)
+      .value,
     cliWrapperMainClass := "imclipitly.Codegen$",
     resourceGenerators.in(Compile) += Def.task {
       val log = streams.value.log
       val cache = target.in(Compile, compile).value / "clippy-codegen"
-      val in = clippyCodegenIn.value.toSet
+      val in = imclipitlyIn.value.toSet
       cliWrapperIncremental(in, cache)(_.map {
         in =>
           val relative =
             in.relativeTo(baseDirectory.value).getOrElse(in).toPath
           val out =
-            clippyCodegenOut.value.toPath
+            imclipitlyOut.value.toPath
               .resolve(relative.toString + ".clippy")
           val args =
             Array("--in", in.getAbsolutePath, "--out", out.toString)
@@ -131,6 +119,7 @@ object ClippyCodegenPlugin extends AutoPlugin {
     }
   )
 
-  override def projectSettings: Seq[_root_.sbt.Def.Setting[_]] =
-    clippyCodegenSettings
+  override def projectSettings: Seq[Def.Setting[_]] =
+    imclipitlySettings
 }
+
