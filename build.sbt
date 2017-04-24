@@ -1,8 +1,8 @@
 lazy val allSettings = Seq(
-  version := "0.1.0-SNAPSHOT",
+  version := "0.0.2",
   scalaVersion := "2.12.2",
-  organization := "io.delmore",
-  description := "implicitly make your project more clippity with imclipitly",
+  organization := "io-delmore",
+  description := "Make your project more clippity implicitly with imclipitly",
   pomIncludeRepository := { _ =>
     false
   },
@@ -13,8 +13,9 @@ lazy val allSettings = Seq(
     ScmInfo(url("https://github.com/shanedelmore/imclipitly"),
             "scm:git@github.com:shanedelmore/imclipitly.git")),
   publishArtifact in Test := false,
+  publishMavenStyle := false,
   bintrayReleaseOnPublish := false,
-  bintrayOrganization := None,
+  bintrayOrganization := Some("io-delmore"),
   bintrayRepository := "sbt-plugins",
   bintrayPackage := "sbt-imclipitly"
 )
@@ -80,4 +81,3 @@ lazy val noPublish = Seq(
   publishLocal := {}
 )
 noPublish
-

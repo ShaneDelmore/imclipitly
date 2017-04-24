@@ -1,9 +1,15 @@
+Imclipitly will generate scala-clippy advice for implicit enrichments in your source code.
+
+To add imclipitly to your project:
+
+``
+
 To run tests:
 
-`sbt clippyCodegen/test`
+`sbt test`
 
-To generate clippy advice in managed_resources for demo app:
+To run integration tests:
 
-`sbt app/compile`
+`sbt it:test`
 
 Project contributors: Shane Delmore, Ólafur Páll Geirsson 
