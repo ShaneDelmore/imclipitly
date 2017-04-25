@@ -1,8 +1,10 @@
+sonatypeProfileName := "io.delmore"
+
 lazy val allSettings = Seq(
-  version := "0.1.0-SNAPSHOT",
+  version := "0.0.2",
   scalaVersion := "2.12.2",
   organization := "io.delmore",
-  description := "implicitly make your project more clippity with imclipitly",
+  description := "Make your project more clippity implicitly with imclipitly",
   pomIncludeRepository := { _ =>
     false
   },
@@ -13,10 +15,25 @@ lazy val allSettings = Seq(
     ScmInfo(url("https://github.com/shanedelmore/imclipitly"),
             "scm:git@github.com:shanedelmore/imclipitly.git")),
   publishArtifact in Test := false,
-  bintrayReleaseOnPublish := false,
-  bintrayOrganization := None,
-  bintrayRepository := "sbt-plugins",
-  bintrayPackage := "sbt-imclipitly"
+  publishMavenStyle := true,
+  sonatypeDefaultResolver := Opts.resolver.sonatypeStaging,
+  useGpg := false,
+  developers := List(
+    Developer(
+      id = "sdelmore",
+      name = "Shane Delmore",
+      email = "shane@delmore.io",
+      url =
+        url("http://github.com/ShaneDelmore/imclipitly/tree/master/readme.md")
+    )
+  ),
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  }
 )
 
 lazy val `imclipitly-core` = project
@@ -80,4 +97,3 @@ lazy val noPublish = Seq(
   publishLocal := {}
 )
 noPublish
-
