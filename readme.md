@@ -1,23 +1,23 @@
-Imclipitly: Because I thought you might want to replace easy to forget imports with an easy to misspell plugin.
+### Imclipitly: Now you can replace easy-to-forget imports with an easy-to-misspell plugin.
 
-Imclipitly will generate scala-clippy advice for implicit enrichments in your source code.
+Imclipitly will generate Scala-Clippy advice for implicit enrichments in your source code.
 
-Imclipitely is only published for Scala 2.12 currently.  I will cross publish to 2.11 shortly.
+This plugin is currently only published for Scala 2.12. *(Will cross publish to 2.11 shortly.)*
 
-To add Imclipitly to your project:
+### To add Imclipitly to your project:
 
-in plugins.sbt: `addSbtPlugin("io.delmore" %% "sbt-imclipitly" % "0.0.2")`
+* in plugins.sbt: `addSbtPlugin("io.delmore" %% "sbt-imclipitly" % "0.0.2")`
 
-in build.sbt: `enablePlugins(ImclipitlyPlugin)`
+* in build.sbt: `enablePlugins(ImclipitlyPlugin)`
 
-On run or package Imclipitly will scan your source code using Scalameta and ScalaFix and then generate Scala-Clippy advice in your managed-resources directory.
+On run or package, Imclipitly will scan your source code using Scalameta and then generate Scala-Clippy advice in your managed-resources directory.
 
-To run tests:
+### To run tests:
 
-`sbt test`
+* `sbt test`
 
-To run integration tests:
+### To run integration tests:
 
-`sbt it:test`
+* `sbt it:test`
 
-Project contributors: Shane Delmore, Ólafur Páll Geirsson 
+_Project contributors: Shane Delmore, Ólafur Páll Geirsson_ 
