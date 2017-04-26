@@ -1,3 +1,5 @@
+[![Gitter](https://img.shields.io/gitter/room/imclipitly/Lobby.svg)](https://gitter.im/imclipitly/Lobby)
+
 ### Imclipitly: Now you can replace easy-to-forget imports with an easy-to-misspell plugin.
 
 Imclipitly will generate Scala-Clippy advice for implicit enrichments in your source code.
