@@ -1,4 +1,4 @@
 > app/run
 > app/package
 # assert something after package is complete, for example
-$ exists app/target/scala-2.10/resource_managed/main/clippy/src/main/scala/testProject/TestCode.scala.clippy
+$ exists app/target/scala-2.10/resource_managed/clippy.json

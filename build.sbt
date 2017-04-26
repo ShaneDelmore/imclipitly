@@ -1,19 +1,18 @@
 sonatypeProfileName := "io.delmore"
 
 lazy val allSettings = Seq(
-  version := "0.0.2",
+  version := "0.0.3",
   scalaVersion := "2.12.2",
   organization := "io.delmore",
   description := "Make your project more clippity implicitly with imclipitly",
   pomIncludeRepository := { _ =>
     false
   },
-  licenses += ("Apache-2.0", url(
-    "https://www.apache.org/licenses/LICENSE-2.0.html")),
+  licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
   homepage := Some(url("http://github.com/shanedelmore/imclipitly/")),
   scmInfo := Some(
-    ScmInfo(url("https://github.com/shanedelmore/imclipitly"),
-            "scm:git@github.com:shanedelmore/imclipitly.git")),
+    ScmInfo(url("https://github.com/shanedelmore/imclipitly"), "scm:git@github.com:shanedelmore/imclipitly.git")
+  ),
   publishArtifact in Test := false,
   publishMavenStyle := true,
   sonatypeDefaultResolver := Opts.resolver.sonatypeStaging,
@@ -23,8 +22,7 @@ lazy val allSettings = Seq(
       id = "sdelmore",
       name = "Shane Delmore",
       email = "shane@delmore.io",
-      url =
-        url("http://github.com/ShaneDelmore/imclipitly/tree/master/readme.md")
+      url = url("http://github.com/ShaneDelmore/imclipitly/tree/master/readme.md")
     )
   ),
   publishTo := {
@@ -97,3 +95,5 @@ lazy val noPublish = Seq(
   publishLocal := {}
 )
 noPublish
+
+addCommandAlias("testAll", ";test ;it:test")
