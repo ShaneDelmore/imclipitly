@@ -11,9 +11,11 @@ import sbt.plugins.JvmPlugin
 object CliWrapperPlugin extends AutoPlugin {
 
   def createSyntheticProject(id: String, base: File): Project =
-    Project(id, base).settings(publish := {},
-                               publishLocal := {},
-                               publishArtifact := false)
+    Project(id, base).settings(
+      publish := {},
+      publishLocal := {},
+      publishArtifact := false
+    )
   class HasMain(reflectiveMain: Main) {
     def main(args: Array[String]): Unit = reflectiveMain.main(args)
   }
@@ -41,14 +43,11 @@ object CliWrapperPlugin extends AutoPlugin {
     // (optional) wrap cliWrapperRun in this function to skip running
     // cli on files that have not changed since last run.
     def cliWrapperIncremental(init: Set[File], cacheDir: File)(
-        onChange: Set[File] => Set[File]): Seq[File] = {
-      def handleUpdate(inReport: ChangeReport[File],
-                       outReport: ChangeReport[File]) = {
+      onChange: Set[File] => Set[File]
+    ): Seq[File] = {
+      def handleUpdate(inReport: ChangeReport[File], outReport: ChangeReport[File]) =
         onChange(inReport.modified -- inReport.removed)
-      }
-      val x = FileFunction.cached(cacheDir)(
-        FilesInfo.lastModified,
-        FilesInfo.lastModified)(handleUpdate)(init)
+      val x = FileFunction.cached(cacheDir)(FilesInfo.lastModified, FilesInfo.lastModified)(handleUpdate)(init)
       x.toSeq
     }
   }
@@ -92,29 +91,33 @@ object ImclipitlyPlugin extends AutoPlugin {
   override def extraProjects: Seq[Project] = Seq(imclipitlyCodegenProject)
 
   lazy val imclipitlySettings = Seq(
-    imclipitlyOut := resourceManaged.in(Compile).value / "clippy",
+    imclipitlyOut := resourceManaged.in(Compile).value.getParentFile,
     imclipitlyIn := sources.in(Compile).value.**("*.scala").get,
     // can be managedClasspath if imclipitly project has no main.
-    cliWrapperClasspath := fullClasspath
-      .in(imclipitlyCodegenProject, Compile)
-      .value,
+    cliWrapperClasspath := fullClasspath.in(imclipitlyCodegenProject, Compile).value,
     cliWrapperMainClass := "imclipitly.Codegen$",
     resourceGenerators.in(Compile) += Def.task {
       val log = streams.value.log
       val cache = target.in(Compile, compile).value / "clippy-codegen"
       val in = imclipitlyIn.value.toSet
-      cliWrapperIncremental(in, cache)(_.map {
-        in =>
-          val relative =
-            in.relativeTo(baseDirectory.value).getOrElse(in).toPath
-          val out =
-            imclipitlyOut.value.toPath
-              .resolve(relative.toString + ".clippy")
-          val args =
-            Array("--in", in.getAbsolutePath, "--out", out.toString)
-          log.info(s"Running codegen for $in")
-          cliWrapperRun(cliWrapperMain.value.main(args))
-          out.toFile
+      val org = organization.value
+      val appName = name.value
+      val appVersion = version.value
+      cliWrapperIncremental(in, cache)(_.map { in =>
+        val relative = in.relativeTo(baseDirectory.value).getOrElse(in).toPath
+        val out = imclipitlyOut.value / "clippy.json"
+        // format: off
+        val args = Array(
+          "--in", in.getAbsolutePath,
+          "--out", out.toString,
+          "--org", org,
+          "--appname", appName,
+          "--appversion", appVersion
+        )
+        // format: on
+        log.info(s"Running codegen for $in")
+        cliWrapperRun(cliWrapperMain.value.main(args))
+        out
       })
     }
   )
@@ -122,4 +125,3 @@ object ImclipitlyPlugin extends AutoPlugin {
   override def projectSettings: Seq[Def.Setting[_]] =
     imclipitlySettings
 }
-

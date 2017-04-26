@@ -6,7 +6,7 @@ This plugin is currently only published for Scala 2.12. *(Will cross publish to 
 
 ### To add Imclipitly to your project:
 
-* in plugins.sbt: `addSbtPlugin("io.delmore" %% "sbt-imclipitly" % "0.0.2")`
+* in plugins.sbt: `addSbtPlugin("io.delmore" %% "sbt-imclipitly" % "0.0.3")`
 
 * in build.sbt: `enablePlugins(ImclipitlyPlugin)`
 
