@@ -10,6 +10,8 @@ This plugin is currently only published for Scala 2.12. *(Will cross publish to 
 
 * in build.sbt: `enablePlugins(ImclipitlyPlugin)`
 
+* and most importantly, make sure you have [SoftwareMill](https://softwaremill.com/)'s [Scala-Clippy](https://github.com/softwaremill/scala-clippy) plugin enabled. 
+
 On run or package, Imclipitly will scan your source code using Scalameta and then generate Scala-Clippy advice in your managed-resources directory.
 
 ### To run tests:
