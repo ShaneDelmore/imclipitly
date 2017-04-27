@@ -4,7 +4,7 @@
 
 Imclipitly will generate Scala-Clippy advice for implicit enrichments in your source code.
 
-This plugin is currently only published for Scala 2.12. *(Will cross publish to 2.11 shortly.)*
+This plugin is currently published for Scala 2.11 and 2.12.
 
 ### To add Imclipitly to your project:
 
