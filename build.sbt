@@ -1,7 +1,7 @@
 sonatypeProfileName := "io.delmore"
 
 lazy val allSettings = Seq(
-  version := "0.0.4-SNAPSHOT",
+  version := "0.0.5-SNAPSHOT",
   scalaVersion := "2.12.2",
   organization := "io.delmore",
   description := "Make your project more clippity implicitly with imclipitly",
