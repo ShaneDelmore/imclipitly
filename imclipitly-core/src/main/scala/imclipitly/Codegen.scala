@@ -5,6 +5,7 @@ import com.softwaremill.clippy._
 
 import scala.collection.JavaConverters._
 import scala.meta._
+import scala.util.matching.Regex
 import java.nio.file.{ Files, Path, Paths }
 
 import caseapp._
@@ -123,6 +124,11 @@ object Codegen extends CaseApp[CodegenOptions] {
   //A rough matcher for now, will come back and create a more accurate matcher another day.
   def regexForType(tpe: Type.Arg): String = {
     val name = tpe.syntax.takeWhile(_ != '[')
+    s".*$name.*"
+  }
+
+  def regexForName(trm: Term.Name): String = {
+    val name = Regex.quote(trm.syntax)
     s".*$name.*"
   }
 

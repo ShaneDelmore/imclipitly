@@ -46,7 +46,7 @@ class CodegenSpec extends FunSpec with MustMatchers {
 
     it("extracts enrichments from source code") {
       val extracted = extractEnrichments(testCodeSource.parse[Source].get)
-      extracted.map(_.name.syntax) mustBe List("increment", "double")
+      extracted.map(_.name.syntax) mustBe List("increment", "double", "**")
     }
 
     it("identifies advice by appname and relative file path") {
@@ -65,6 +65,14 @@ class CodegenSpec extends FunSpec with MustMatchers {
 
       it("merges in new advice") {
         updateAdvice(testCodeLib, sampleExistingAdvice, moreTestCodeSource) must not be empty
+      }
+    }
+
+    describe("Clippy advice creation") {
+      it("escapes symbolic names") {
+        val extracted = extractEnrichments(testCodeSource.parse[Source].get)
+        val symbolic = extracted.find(_.name.syntax == "**").get
+        regexForName(symbolic.name) mustBe raw".*\Q**\E.*"
       }
     }
   }
@@ -100,6 +108,8 @@ object TestData {
       |    def increment = num + 1
       |
       |    def double: Int = num * 2
+      |
+      |    def **(exponent: Int): Double = math.pow(num, exponent)
       |  }
       |}
     """.stripMargin
