@@ -1,7 +1,7 @@
 sonatypeProfileName := "io.delmore"
 
 lazy val allSettings = Seq(
-  version := "0.0.3",
+  version := "0.0.4-SNAPSHOT",
   scalaVersion := "2.12.2",
   organization := "io.delmore",
   description := "Make your project more clippity implicitly with imclipitly",
@@ -37,7 +37,7 @@ lazy val allSettings = Seq(
 lazy val `imclipitly-core` = project
   .settings(
     allSettings,
-    scalaVersion := "2.12.2",
+    crossScalaVersions := Seq("2.12.2", "2.11.11"),
     libraryDependencies += "com.github.alexarchambault" %% "case-app" % "1.2.0-M3",
     libraryDependencies += "org.scalameta" %% "scalameta" % "1.7.0",
     libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.0",
