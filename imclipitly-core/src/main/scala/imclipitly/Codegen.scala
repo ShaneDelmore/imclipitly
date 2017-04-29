@@ -109,6 +109,7 @@ object Codegen extends CaseApp[CodegenOptions] {
       .collect {
         case pkg: Pkg => packageName(pkg)
         case obj: Defn.Object => obj.name
+        case pkgObj: Pkg.Object => pkgObj.name
       }
       .mkString(".")
 

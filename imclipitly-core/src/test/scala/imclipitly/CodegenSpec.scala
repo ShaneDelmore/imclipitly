@@ -31,6 +31,19 @@ class CodegenSpec extends FunSpec with MustMatchers {
       path(target) mustBe "level1.level2"
     }
 
+    it("can construct path when using scala style package objects") {
+      val source = """
+                     |package level1
+                     |package level2
+                     |package object level3 {
+                     |  object target
+                     |}
+                   """.stripMargin.parse[Source].get
+
+      val target = source.collect { case obj: Defn.Object => obj }.head
+      path(target) mustBe "level1.level2.level3"
+    }
+
     it("extracts enrichments from source code") {
       val extracted = extractEnrichments(testCodeSource.parse[Source].get)
       extracted.map(_.name.syntax) mustBe List("increment", "double")
